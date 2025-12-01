@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Imposter Game</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; background: #f4f4f4; }
+    .screen { display:none; padding: 50px; }
+    button { padding: 14px 28px; font-size: 18px; margin-top: 20px; cursor: pointer; }
+    h1 { margin-bottom: 20px; }
+    select, input { font-size: 18px; padding: 8px; margin: 10px; }
+  </style>
+</head>
+<body>
+
+<!-- HOME SCREEN -->
+<div id="home" class="screen" style="display:block;">
+  <h1>🎄 Imposter Game</h1>
+  <p>Choose category + number of players</p>
+
+  <label>Category:</label>
+  <select id="category">
+    <option value="christmas">Christmas</option>
+    <option value="finance">Finance</option>
+    <option value="family">Family</option>
+    <option value="sports">Sports</option>
+  </select><br>
+
+  <label>Number of Players:</label>
+  <input type="number" id="players" min="3" max="20" value="5"><br>
+
+  <button onclick="startGame()">Start Game</button>
+</div>
+
+<!-- ROLE REVEAL SCREEN -->
+<div id="reveal" class="screen">
+  <h2 id="playerInfo"></h2>
+  <h1 id="wordDisplay"></h1>
+  <button onclick="nextPlayer()">Next Player</button>
+</div>
+
+<!-- GAME END SCREEN -->
+<div id="end" class="screen">
+  <h1>All players have viewed their roles!</h1>
+  <p>Discuss, accuse, and find the Imposter 👀</p>
+  <button onclick="location.reload()">Play Again</button>
+</div>
+
+<script>
+const words = {
+  christmas: ["Santa", "Reindeer", "Elf", "Christmas Tree", "Gift Box", "Snowman", "Candy Cane","Sleigh","Stocking"],
+  finance: ["Stock Market", "Dividend", "Bond", "Asset", "Portfolio", "Inflation", "Loan", "Equity"],
+  family: ["Brother", "Mother", "Cousin", "Dinner", "Holiday Trip", "Baby", "Grandpa", "Love"],
+  sports: ["Football", "Basketball", "Tennis", "Stadium", "Coach", "Athlete", "Goalkeeper", "Penalty"]
+};
+
+let chosenWord = "";
+let totalPlayers = 0;
+let imposterIndex = 0;
+let currentPlayer = 1;
+
+function startGame() {
+  const category = document.getElementById("category").value;
+  totalPlayers = Number(document.getElementById("players").value);
+
+  chosenWord = words[category][Math.floor(Math.random()*words[category].length)];
+  imposterIndex = Math.floor(Math.random()*totalPlayers) + 1;
+
+  document.getElementById("home").style.display = "none";
+  showReveal();
+}
+
+function showReveal() {
+  document.getElementById("reveal").style.display = "block";
+  document.getElementById("playerInfo").innerText = `Player ${currentPlayer}, tap to see your word`;
+
+  // Imposter gets blank — others get the word
+  document.getElementById("wordDisplay").innerText =
+    currentPlayer === imposterIndex ? "❓ You are the IMPOSTER!" : `📝 Word: ${chosenWord}`;
+}
+
+function nextPlayer() {
+  currentPlayer++;
+  if(currentPlayer > totalPlayers){
+    document.getElementById("reveal").style.display = "none";
+    document.getElementById("end").style.display = "block";
+  } else showReveal();
+}
+</script>
+
+</body>
+</html>
